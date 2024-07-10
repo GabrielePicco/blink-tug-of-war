@@ -10,3 +10,9 @@ The repository contains 3 sub-repositories:
 2. [speedrun-tug-of-war-serverless](speedrun-tug-of-war-serverless): FastAPI Python server generating Blink metadata and image on the fly.
 3. [speedrun-tug-of-war-tx](speedrun-tug-of-war-tx): Express server preparing the transactions.
 4. [speedrun-tug-of-war-UI](speedrun-tug-of-war-UI): UI to generate a new tug-of-war blink
+
+## Create a new Tug of War Blink
+
+Create a new Tug of War Blink using the UI:
+
+  https://main--tug-of-war-ui.netlify.app/
