@@ -1,0 +1,29 @@
+# Common
+*.DS_Store
+*node_modules
+*package-lock.json
+*target
+*fly.toml
+*.log
+
+# speedrun-tug-of-war-anchor
+**/*.rs.bk
+*/test-ledger
+*.yarn
+
+# speedrun-tug-of-war-serverless
+*/.serverless
+*/serverless
+*/test_requirements
+*/.idea/
+
+# Byte-compiled / optimized / DLL files
+*/__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+.Python
+*/build/
+*/develop-eggs/
+*/dist/

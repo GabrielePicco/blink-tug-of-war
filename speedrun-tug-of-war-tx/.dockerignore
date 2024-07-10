@@ -1,0 +1,30 @@
+# flyctl launch added from .gitignore
+# npm
+**/node_modules
+**/package-lock.json
+**/*.log
+**/*.gz
+
+# Coveralls
+**/.nyc_output
+**/coverage
+
+**/dist
+**/fly.toml
+
+# flyctl launch added from .idea/.gitignore
+# Default ignored files
+.idea/shelf
+.idea/workspace.xml
+# Editor-based HTTP Client requests
+.idea/httpRequests
+
+# flyctl launch added from node_modules/jayson/.gitignore
+node_modules/jayson/node_modules
+node_modules/jayson/**/.*
+!node_modules/jayson/**/.gitignore
+!node_modules/jayson/**/.travis.yml
+!node_modules/jayson/**/.jshintrc
+!node_modules/jayson/**/.npmignore
+node_modules/jayson/coverage
+node_modules/jayson/yarn-error.log

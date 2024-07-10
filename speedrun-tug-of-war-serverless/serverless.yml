@@ -1,0 +1,52 @@
+service: serverless-tug-fastapi
+
+plugins:
+  - serverless-python-requirements
+  - serverless-localstack
+provider:
+  name: aws
+  runtime: python3.9
+  stage: ${opt:stage, "dev"}
+  region: us-west-1
+
+package:
+    exclude:
+        - Makefile
+        - poetry.lock
+        - README.md
+        - tests/**
+        - docs/**
+        - node_modules/**
+        - .virtualenv/**
+        - .serverless/**
+        - package.json
+        - package-lock.json
+
+custom:
+  pythonRequirements:
+    dockerizePip: true
+    layer:
+      name: tug-fastapi-deps
+      description: Dependencies of serverless-fastapi
+      compatibleRuntimes:
+        - python3.9
+
+  localstack:
+      stages:
+          - local
+
+functions:
+  api:
+    handler: api.main.handler
+    environment:
+      STAGE: ${self:provider.stage}
+      AUTHORITY_KEY: ${env:AUTHORITY_KEY}
+      RPC_URL: ${env:RPC_URL}
+      BASE_HOST: ${env:BASE_HOST}
+      BASE_HOST_TX: ${env:BASE_HOST_TX}
+    layers:
+      - { Ref: PythonRequirementsLambdaLayer }
+    events:
+      - http:
+          method: any
+          path: /{proxy+}
