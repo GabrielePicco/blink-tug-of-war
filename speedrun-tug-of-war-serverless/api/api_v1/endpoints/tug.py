@@ -52,50 +52,52 @@ def get_blended_image(identifier: str, x: int):
     return Response(content=byte_im, media_type="image/jpeg")
 
 
-@router.get("/item/{identifier}")
-async def read_item(request: Request, identifier: str):
-    # If not application/json, redirect to dial.to
-    if "application/json" not in str(request.headers.get("Accept")):
-        return RedirectResponse(url=f"https://dial.to/?action=solana-action:{BASE_HOST}/api/v1/tug/item"
-                                    f"/{identifier}")
+@router.options("/item/{identifier}")
+async def options_item(request: Request, identifier: str):
+    return RedirectResponse(url=f"https://dial.to/?action=solana-action:{BASE_HOST}/api/v1/tug/item"
+                                f"/{identifier}")
 
+
+@router.get("/item/{identifier}")
+async def read_item(response: Response, request: Request, identifier: str):
+    await add_cors_headers(response)
     account_info = await solana_client.get_account_info(Pubkey.from_string(identifier))
     if account_info.value is None:
         return {"error": "Account not found"}
     x = int.from_bytes(reversed([b for b in account_info.value.data[8:10]]), "big", signed=True)
     is_game_on = 250 > x > -250
     actions_is_game_on = [
+        {
+            "label": "Pull Left",
+            "href": f"{BASE_HOST_TX}/pull-left?tug={identifier}"
+        },
+        {
+            "label": "Pull Right",
+            "href": f"{BASE_HOST_TX}/pull-right?tug={identifier}"
+        },
+        {
+            "label": "Red Win",
+            "href": f"{BASE_HOST_TX}/bet-left?amount={{amount}}&tug={identifier}",
+            "parameters": [
                 {
-                    "label": "Pull Left",
-                    "href": f"{BASE_HOST_TX}/pull-left?tug={identifier}"
-                },
-                {
-                    "label": "Pull Right",
-                    "href": f"{BASE_HOST_TX}/pull-right?tug={identifier}"
-                },
-                {
-                    "label": "Red Win",
-                    "href": f"{BASE_HOST_TX}/bet-left?amount={{amount}}&tug={identifier}",
-                    "parameters": [
-                        {
-                            "name": "amount",
-                            "label": "Enter the amount of SOL to bet&",
-                            "required": True,
-                        }
-                    ]
-                },
-                {
-                    "label": "White Win",
-                    "href": f"{BASE_HOST_TX}/bet-right?amount={{amount}}&tug={identifier}",
-                    "parameters": [
-                        {
-                            "name": "amount",
-                            "label": "Enter the amount of SOL to bet",
-                            "required": True,
-                        }
-                    ]
+                    "name": "amount",
+                    "label": "Enter the amount of SOL to bet",
+                    "required": True,
                 }
             ]
+        },
+        {
+            "label": "White Win",
+            "href": f"{BASE_HOST_TX}/bet-right?amount={{amount}}&tug={identifier}",
+            "parameters": [
+                {
+                    "name": "amount",
+                    "label": "Enter the amount of SOL to bet",
+                    "required": True,
+                }
+            ]
+        }
+    ]
     actions_is_game_over = [
         {
             "label": "Claim and Close Bet",
@@ -111,3 +113,9 @@ async def read_item(request: Request, identifier: str):
             "actions": actions_is_game_on if is_game_on else actions_is_game_over
         },
     }
+
+
+async def add_cors_headers(response):
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET,POST,OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, Content-Encoding, Accept-Encoding"
