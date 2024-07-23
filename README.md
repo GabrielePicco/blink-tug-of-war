@@ -15,4 +15,4 @@ The repository contains 3 sub-repositories:
 
 Create a new Tug of War Blink using the UI:
 
-  https://main--tug-of-war-ui.netlify.app/
+  [create-tug-of-war.magicblock.app](https://create-tug-of-war.magicblock.app/)
